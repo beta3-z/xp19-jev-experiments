@@ -1,0 +1,10 @@
+Pillow>=10.0
+
+# Needed for scroll detection (phase correlation). Without it the tool still
+# runs, but assumes each scroll moved exactly as commanded and cannot tell that
+# it reached the edge of the scene.
+numpy>=1.24
+
+# Optional: bundles an ffmpeg binary so `render` can produce video.mp4 directly.
+# Without it the tool still writes frames, you just encode them yourself.
+# imageio-ffmpeg>=0.4.9

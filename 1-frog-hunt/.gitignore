@@ -1,0 +1,7 @@
+runs/
+__pycache__/
+*.pyc
+shot.png
+.env
+.env.*
+!.env.example

@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# Run output: frames, videos, event logs
+runs/
+*.mp4
+
+# Secrets
+.env
+.env.*
+!.env.example
+*.key
+
+# OS / editors
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
