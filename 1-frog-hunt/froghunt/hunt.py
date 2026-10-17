@@ -8,6 +8,7 @@ Coordinates have two levels:
 """
 from __future__ import annotations
 
+import io
 import json
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -41,6 +42,19 @@ from .imaging import (
 )
 from .typesafe import PRICE_PER_MTOKEN, Detection
 
+TITLE_QUESTION = "Is this the title screen of a game, with a START button?"
+START_TARGET = "the START button"
+TITLE_MIN = 0.40
+
+
+def draw_wrong(draw, rect, colour, width: int) -> None:
+    """A small diagonal cross at the centre: visible to the model, covers no neighbour."""
+    x0, y0, x1, y1 = rect
+    cx, cy = (x0 + x1) / 2, (y0 + y1) / 2
+    arm = max(10, min(x1 - x0, y1 - y0) // 3)
+    draw.line([(cx - arm, cy - arm), (cx + arm, cy + arm)], fill=colour, width=width)
+    draw.line([(cx - arm, cy + arm), (cx + arm, cy - arm)], fill=colour, width=width)
+
 
 @dataclass
 class Settings:
@@ -66,6 +80,8 @@ class Settings:
     counter_rect: tuple[int, int, int, int] | None = None
     max_runtime_s: float = 0.0
     max_side: int = MAX_SIDE
+    detect_title: bool = False
+    pan_axis: str = "x"
 
 
 @dataclass
@@ -141,10 +157,11 @@ class Hunter:
         self.pan = pan
 
         self.found: list[Found] = []
+        self.wrong: list[Found] = []
         self.origin_x = 0.0
         self.origin_y = 0.0
         self.pages = 1
-        self._axis = "x"
+        self._axis = self.settings.pan_axis
         self._direction = 1
         self._viewport = (0, 0)
         self._counter_image: Image.Image | None = None
@@ -185,6 +202,9 @@ class Hunter:
 
     def _grab(self) -> Image.Image:
         """Capture without the overlay baked into the frame."""
+        if self.window is not None and win32.user32.IsIconic(self.window.hwnd):
+            self.window.focus()
+            time.sleep(0.6)
         if self.overlay is not None and self.overlay.alive:
             self.overlay.hide()
         try:
@@ -201,6 +221,8 @@ class Hunter:
         print(f"model {getattr(self.client, 'model', '?')} · target={self.settings.target!r}")
 
         try:
+            if self.settings.detect_title and self.window is not None:
+                self._leave_title()
             misses = 0
             index = 0
             while len(self.found) < self.settings.max_frogs:
@@ -265,6 +287,47 @@ class Hunter:
         except Exception as exc:
             print(f"  overlay error: {exc}")
 
+    # -- title screen ----------------------------------------------------
+    def _encode_frame(self, image: Image.Image) -> bytes:
+        scale = min(1.0, self.settings.max_side / max(image.size))
+        if scale < 1.0:
+            image = image.resize((round(image.width * scale), round(image.height * scale)))
+        buf = io.BytesIO()
+        image.save(buf, "PNG")
+        return buf.getvalue()
+
+    def _ask_noul(self, image: Image.Image, question: str) -> float:
+        answers = self.client.ask_custom(self._encode_frame(image), {"q": {"type": "noul", "instructions": question}})
+        return float((answers.get("q") or {}).get("noul") or 0.0)
+
+    def _leave_title(self) -> None:
+        assert self.window is not None
+        for attempt in range(4):
+            if self._stopped():
+                return
+            shot = self._grab()
+            title = self._ask_noul(shot, TITLE_QUESTION)
+            self._log("title_check", attempt=attempt + 1, present=round(title, 3))
+            if title < TITLE_MIN:
+                return
+            answers = self.client.ask_custom(
+                self._encode_frame(shot), {"start": {"type": "box", "instructions": START_TARGET}}
+            )
+            raw = (answers.get("start") or {}).get("box")
+            if not isinstance(raw, dict):
+                return
+            try:
+                box = Box.from_api(raw)
+            except (KeyError, TypeError, ValueError):
+                return
+            x, y, width, height = self.window.client_rect()
+            cx, cy = box.center()
+            px, py = x + int(cx * width), y + int(cy * height)
+            self.window.focus()
+            win32.click(px, py)
+            print(f"  title screen (p={title:.2f}) -> START at {px},{py}")
+            time.sleep(2.5)
+
     # -- one look --------------------------------------------------------
     def _round(self, index: int) -> RoundResult:
         shot = self._grab()
@@ -272,12 +335,17 @@ class Hunter:
         counter_before = self._counter_crop(shot)
 
         work = shot.copy()
+        painter = ImageDraw.Draw(work)
         if self.settings.mask:
             for found in self.found:
                 viewport = scene_to_viewport(found.rect, self._origin, (width, height))
                 if viewport is not None:
                     ring = Box.from_pixels(*viewport, width, height)
-                    draw_marker(ImageDraw.Draw(work), ring, work.size, label=str(found.index))
+                    draw_marker(painter, ring, work.size, label=str(found.index))
+        for wrong in self.wrong:
+            viewport = scene_to_viewport(wrong.rect, self._origin, (width, height))
+            if viewport is not None:
+                draw_wrong(painter, viewport, (190, 30, 30), 7)
 
         cols, rows = self._grid(width, height)
         tiles = make_grid(cols, rows, self.settings.tile_overlap)
@@ -343,7 +411,11 @@ class Hunter:
                 return RoundResult(index=index, found=False, page=self.pages, at_s=round(time.perf_counter() - self.started, 2), origin=self._origin)
             clicked, confirmed = self._click_and_check(best.box, shot, counter_before)
 
-        self.found.append(Found(index=len(self.found) + 1, rect=best.rect))
+        hit = confirmed is not False
+        if hit:
+            self.found.append(Found(index=len(self.found) + 1, rect=best.rect))
+        else:
+            self.wrong.append(Found(index=len(self.wrong) + 1, rect=best.rect))
         if hasattr(self.client, "note_found"):
             self.client.note_found(best.box)
 
@@ -354,7 +426,7 @@ class Hunter:
         self._log(
             "round_end",
             round=index,
-            found=True,
+            found=hit,
             page=self.pages,
             tile=best.tile.name,
             box=best.box.as_dict(),
@@ -368,7 +440,7 @@ class Hunter:
         )
         return RoundResult(
             index=index,
-            found=True,
+            found=hit,
             page=self.pages,
             tile=best.tile.name,
             box=best.box.as_dict(),
@@ -540,6 +612,11 @@ class Hunter:
                 draw.line([(tx - arm, ty), (tx + arm, ty)], fill=colour, width=max(2, px(2)))
                 draw.line([(tx, ty - arm), (tx, ty + arm)], fill=colour, width=max(2, px(2)))
 
+        for wrong in self.wrong:
+            viewport = scene_to_viewport(wrong.rect, self._origin, (width, height))
+            if viewport is not None:
+                draw_wrong(draw, viewport, (*RED, 235), max(3, px(5)))
+
         total = self.settings.total_frogs
         count = self.settings.already_found + len(self.found)
         plate = [px(22), px(18), px(22) + px(360), px(18) + px(150)]
@@ -579,7 +656,7 @@ class Hunter:
 
     def _report(self, result: RoundResult) -> None:
         elapsed = time.perf_counter() - self.started
-        if result.found:
+        if result.tile:
             mark = "OK " if result.click_confirmed in (True, None) else "?? "
             click = "" if not result.clicked else f" click={'hit' if result.click_confirmed else 'miss'}"
             print(

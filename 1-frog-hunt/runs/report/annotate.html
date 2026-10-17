@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Разметка лягушек</title>
+<style>
+  :root { --bg:#14161a; --card:#1d2126; --ink:#e8ecf1; --dim:#93a1b1;
+          --green:#00be5a; --yellow:#ebbe28; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink);
+         font:13.5px/1.45 "Segoe UI",Roboto,sans-serif; }
+  header { padding:10px 18px; border-bottom:1px solid #2a2f36; display:flex; gap:18px;
+           align-items:center; flex-wrap:wrap; }
+  header b { font-weight:600; }
+  .hint { color:var(--dim); font-size:12.5px; }
+  #stage { padding:12px 18px; }
+  #wrap { position:relative; display:inline-block; line-height:0; }
+  #shot { display:block; max-width:calc(100vw - 40px); max-height:calc(100vh - 168px); }
+  #layer { position:absolute; left:0; top:0; right:0; bottom:0; cursor:crosshair; }
+  .box { position:absolute; border:2px solid var(--yellow); cursor:pointer; }
+  .box.top { border-width:3px; }
+  .box.added { border-color:var(--green); background:rgba(0,190,90,.12); }
+  .box span { position:absolute; left:0; top:-16px; font-size:11px; color:var(--yellow);
+              background:rgba(0,0,0,.55); padding:0 3px; pointer-events:none; }
+  .box.added span { color:var(--green); }
+  .handle { position:absolute; width:13px; height:13px; border-radius:2px;
+            border:1px solid rgba(0,0,0,.55); background:var(--yellow); }
+  .box.added .handle { background:var(--green); }
+  .handle.nw { left:-7px; top:-7px; cursor:nwse-resize; }
+  .handle.ne { right:-7px; top:-7px; cursor:nesw-resize; }
+  .handle.sw { left:-7px; bottom:-7px; cursor:nesw-resize; }
+  .handle.se { right:-7px; bottom:-7px; cursor:nwse-resize; }
+  nav { padding:0 18px 16px; display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  button { background:#232a31; color:var(--ink); border:1px solid #3b434d; border-radius:7px;
+           padding:6px 12px; cursor:pointer; font-size:13px; }
+  button:hover { border-color:#6d7885; }
+  button.primary { border-color:#2f6b45; }
+  #list { display:flex; gap:6px; overflow-x:auto; padding:0 18px 12px; }
+  .chip { flex:0 0 auto; background:var(--card); border:1px solid #262b31; border-radius:7px;
+          padding:5px 9px; cursor:pointer; font-size:12px; color:var(--dim); }
+  .chip.active { border-color:#6d7885; color:var(--ink); }
+  .chip.done { color:var(--green); border-color:#2f6b45; }
+  #status { color:var(--dim); font-size:12.5px; }
+</style>
+</head>
+<body>
+<header>
+  <b>Разметка лягушек</b>
+  <span class="hint">жёлтая рамка — предложение Jev и по умолчанию <b>верна</b>: клик по ней = удалить (это не лягушка).
+    Клик по пустому месту = добавить пропущенную. Угловые квадратики у любой рамки = изменить размер.</span>
+  <span id="status"></span>
+</header>
+<div id="list"></div>
+<div id="stage">
+  <div id="wrap">
+    <img id="shot" alt="">
+    <div id="layer"></div>
+  </div>
+</div>
+<nav>
+  <button id="prev">← пред.</button>
+  <button id="next">след. →</button>
+  <button id="clear">сбросить кадр</button>
+  <button id="save" class="primary">сохранить разметку</button>
+  <span class="hint" id="counts"></span>
+</nav>
+<script>
+const SHOT_W = 2560, SHOT_H = 1440, NEW_BOX = 110;
+const state = { steps: [], index: 0, frames: {} };
+
+function frameState(frame) {
+  if (!state.frames[frame]) state.frames[frame] = { removed: [], added: [], resized: {} };
+  return state.frames[frame];
+}
+
+function entriesFor(step) {
+  const fs = frameState(step.frame);
+  const entries = [];
+  (step.candidates || []).forEach((candidate, index) => {
+    if (fs.removed.includes(index)) return;
+    entries.push({ box: fs.resized[index] || candidate.box_px, kind: "proposal", index,
+                   label: candidate.score.toFixed(2), top: index === 0 });
+  });
+  fs.added.forEach((box, index) => {
+    entries.push({ box, kind: "added", index, label: `+${index + 1}`, top: false });
+  });
+  return entries;
+}
+
+function render() {
+  const step = state.steps[state.index];
+  const img = document.getElementById("shot");
+  img.src = "/shots/" + step.frame;
+  img.onload = draw;
+  if (img.complete) draw();
+  updateChips();
+}
+
+function draw() {
+  const step = state.steps[state.index];
+  const img = document.getElementById("shot");
+  const layer = document.getElementById("layer");
+  const scale = img.clientWidth / SHOT_W;
+  layer.innerHTML = "";
+  entriesFor(step).forEach(entry => {
+    const [x0, y0, x1, y1] = entry.box;
+    const el = document.createElement("div");
+    el.className = "box" + (entry.kind === "added" ? " added" : "") + (entry.top ? " top" : "");
+    el.style.cssText = `left:${x0 * scale}px;top:${y0 * scale}px;width:${(x1 - x0) * scale}px;height:${(y1 - y0) * scale}px`;
+    el.innerHTML = `<span>${entry.label}</span>`;
+    el.onclick = event => {
+      event.stopPropagation();
+      const fs = frameState(step.frame);
+      if (entry.kind === "proposal") fs.removed.push(entry.index);
+      else fs.added.splice(entry.index, 1);
+      draw();
+      updateChips();
+    };
+    ["nw", "ne", "sw", "se"].forEach(corner => {
+      const handle = document.createElement("div");
+      handle.className = `handle ${corner}`;
+      handle.title = "потянуть, чтобы изменить размер";
+      handle.onmousedown = event => startResize(event, step, entry, corner);
+      handle.onclick = event => event.stopPropagation();
+      el.appendChild(handle);
+    });
+    layer.appendChild(el);
+  });
+}
+
+let drag = null;
+
+function startResize(event, step, entry, corner) {
+  event.stopPropagation();
+  event.preventDefault();
+  const scale = document.getElementById("shot").clientWidth / SHOT_W;
+  drag = { step, entry, corner, scale, x: event.clientX, y: event.clientY, box: entry.box.slice() };
+  document.addEventListener("mousemove", onResize);
+  document.addEventListener("mouseup", stopResize);
+}
+
+function onResize(event) {
+  if (!drag) return;
+  const dx = (event.clientX - drag.x) / drag.scale;
+  const dy = (event.clientY - drag.y) / drag.scale;
+  let [x0, y0, x1, y1] = drag.box;
+  if (drag.corner.includes("w")) x0 += dx;
+  if (drag.corner.includes("e")) x1 += dx;
+  if (drag.corner.includes("n")) y0 += dy;
+  if (drag.corner.includes("s")) y1 += dy;
+  if (x1 - x0 < 24) { drag.corner.includes("w") ? x0 = x1 - 24 : x1 = x0 + 24; }
+  if (y1 - y0 < 24) { drag.corner.includes("n") ? y0 = y1 - 24 : y1 = y0 + 24; }
+  const box = [Math.round(Math.max(0, x0)), Math.round(Math.max(0, y0)),
+               Math.round(Math.min(SHOT_W, x1)), Math.round(Math.min(SHOT_H, y1))];
+  const fs = frameState(drag.step.frame);
+  if (drag.entry.kind === "proposal") fs.resized[drag.entry.index] = box;
+  else fs.added[drag.entry.index] = box;
+  draw();
+}
+
+function stopResize() {
+  drag = null;
+  document.removeEventListener("mousemove", onResize);
+  document.removeEventListener("mouseup", stopResize);
+}
+
+document.getElementById("layer").onclick = event => {
+  const step = state.steps[state.index];
+  const layer = document.getElementById("layer");
+  const rect = layer.getBoundingClientRect();
+  const scale = document.getElementById("shot").clientWidth / SHOT_W;
+  const cx = (event.clientX - rect.left) / scale;
+  const cy = (event.clientY - rect.top) / scale;
+  const half = NEW_BOX / 2;
+  frameState(step.frame).added.push(
+    [Math.round(cx - half), Math.round(cy - half), Math.round(cx + half), Math.round(cy + half)]);
+  draw();
+  updateChips();
+};
+
+function updateChips() {
+  document.querySelectorAll(".chip").forEach((el, i) => {
+    el.classList.toggle("active", i === state.index);
+    el.classList.toggle("done", entriesFor(state.steps[i]).length > 0 && frameState(state.steps[i].frame).removed.length > 0);
+  });
+  const step = state.steps[state.index];
+  const fs = frameState(step.frame);
+  const entries = entriesFor(step);
+  document.getElementById("counts").textContent =
+    `кадр ${state.index + 1} из ${state.steps.length} · рамок ${entries.length} · удалено ${fs.removed.length}`;
+}
+
+document.getElementById("prev").onclick = () => { state.index = Math.max(0, state.index - 1); render(); };
+document.getElementById("next").onclick = () => { state.index = Math.min(state.steps.length - 1, state.index + 1); render(); };
+document.getElementById("clear").onclick = () => {
+  state.frames[state.steps[state.index].frame] = { removed: [], added: [], resized: {} };
+  render();
+};
+document.getElementById("save").onclick = async () => {
+  const payload = {};
+  state.steps.forEach(step => {
+    const fs = frameState(step.frame);
+    payload[step.frame] = {
+      boxes: entriesFor(step).map(entry => entry.box),
+      removed: fs.removed,
+      added: fs.added,
+      resized: fs.resized,
+    };
+  });
+  const response = await fetch("/annotations", { method: "POST", body: JSON.stringify(payload) });
+  document.getElementById("status").textContent = response.ok ? "сохранено" : "ошибка сохранения";
+};
+
+function restore(frame, step, value) {
+  const fs = frameState(frame);
+  if (!value) return;
+  if (Array.isArray(value)) {
+    fs.removed = [];
+    fs.added = [];
+    const candidates = step.candidates || [];
+    candidates.forEach((candidate, index) => {
+      if (!value.some(box => same(box, candidate.box_px))) fs.removed.push(index);
+    });
+    value.forEach(box => {
+      if (!candidates.some(candidate => same(box, candidate.box_px))) fs.added.push(box);
+    });
+    return;
+  }
+  fs.removed = value.removed || [];
+  fs.added = value.added || [];
+  fs.resized = value.resized || {};
+}
+
+function same(a, b) { return a.every((v, i) => Math.abs(v - b[i]) < 4); }
+
+async function boot() {
+  const data = await (await fetch("/data.json")).json();
+  state.steps = data.steps.filter(step => step.candidates && step.candidates.length);
+  let saved = {};
+  try { saved = await (await fetch("/annotations")).json(); } catch (error) { saved = {}; }
+  const list = document.getElementById("list");
+  state.steps.forEach((step, index) => {
+    restore(step.frame, step, saved[step.frame]);
+    const el = document.createElement("button");
+    el.className = "chip";
+    el.textContent = `${index + 1}. ${step.frame.replace("2026101719", "").replace("_1.jpg", "")}`;
+    el.onclick = () => { state.index = index; render(); };
+    list.appendChild(el);
+  });
+  render();
+}
+
+boot();
+</script>
+</body>
+</html>

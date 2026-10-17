@@ -17,7 +17,7 @@ from . import win32
 from .envfile import load_env
 from .hotkey import KillSwitch
 from .hunt import Hunter, Settings
-from .imaging import Box, Rect, rect_iou
+from .imaging import Box, Rect, estimate_view_shift, rect_iou
 from .overlay import Overlay
 from .recorder import Recorder
 from .render import film_available, render, render_film
@@ -65,7 +65,10 @@ def main(argv: list[str] | None = None) -> int:
     run.add_argument("--record", action="store_true", help="record the screen to film/ and burn boxes in later")
     run.add_argument("--record-fps", type=float, default=8.0)
     run.add_argument("--kill-key", default="f8")
-    run.add_argument("--pan", default="wheel", choices=["none", "wheel", "drag", "keys"])
+    run.add_argument("--pan", default="wheel", choices=["none", "wheel", "drag", "keys", "edge"])
+    run.add_argument("--pan-axis", default="x", choices=["x", "y"], help="axis to scroll first")
+    run.add_argument("--pan-hold", type=float, default=2.5, help="edge pan: max seconds to hold the cursor at the edge")
+    run.add_argument("--detect-title", action=argparse.BooleanOptionalAction, default=False, help="press START when the title screen shows")
     run.add_argument("--pan-step", type=float, default=0.55, help="fraction of the viewport to scroll")
     run.add_argument("--pan-notches", type=float, default=3.0)
     run.add_argument("--miss-before-pan", type=int, default=2)
@@ -175,6 +178,7 @@ def _cmd_run(args) -> int:
     else:
         win32.enable_dpi_awareness()
         window = win32.find_window(args.window)
+        window.focus()
         grab = window.grab
 
     overlay = None
@@ -228,6 +232,8 @@ def _cmd_run(args) -> int:
         pan_step=args.pan_step,
         counter_rect=_parse_rect(args.counter_rect),
         max_runtime_s=args.max_runtime,
+        detect_title=args.detect_title,
+        pan_axis=args.pan_axis,
     )
 
     try:
@@ -362,6 +368,29 @@ def _make_pan(window, args):
             distance = int((width if axis == "x" else height) * args.pan_step) * direction
             end = (cx + (distance if axis == "x" else 0), cy + (0 if axis == "x" else distance))
             win32.drag((cx, cy), end, button="middle")
+        elif args.pan == "edge":
+            x, y, width, height = window.client_rect()
+            span = width if axis == "x" else height
+            wanted = span * args.pan_step
+            if axis == "x":
+                point = (x + 6 if direction < 0 else x + width - 6, y + height // 2)
+            else:
+                point = (x + width // 2, y + 6 if direction < 0 else y + height - 6)
+            home = (x + width // 2, y + height // 2)
+            win32.move_to(*point)
+            moved = 0.0
+            previous = window.grab()
+            deadline = time.time() + args.pan_hold
+            try:
+                while moved < wanted and time.time() < deadline:
+                    time.sleep(0.12)
+                    current = window.grab()
+                    shift = estimate_view_shift(previous, current)
+                    if shift:
+                        moved += abs(shift[0] if axis == "x" else shift[1])
+                    previous = current
+            finally:
+                win32.move_to(*home)
         else:
             vk = ARROWS[(0 if axis == "x" else 1, 1 if direction > 0 else -1)]
             for _ in range(max(1, int(args.pan_notches))):

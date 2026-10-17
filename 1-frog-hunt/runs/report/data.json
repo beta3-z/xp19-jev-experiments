@@ -1,0 +1,1087 @@
+{
+ "created": "2026-10-17 19:52:12",
+ "mode": "dry run over screenshots",
+ "model": "jev-1.14.0",
+ "calls": 136,
+ "tokens": 633521,
+ "cost_usd": 0.0266,
+ "steps": [
+  {
+   "frame": "20261017190823_1.jpg",
+   "title_p": 0.69,
+   "action": "start",
+   "start_p": 0.77,
+   "start_conf": 0.81,
+   "start_box": [
+    1152,
+    749,
+    1382,
+    835
+   ],
+   "elapsed_ms": 929,
+   "calls": 2,
+   "tokens": 7812,
+   "image": "frames/step_00.jpg"
+  },
+  {
+   "frame": "20261017190837_1.jpg",
+   "title_p": 0.09,
+   "action": "scroll",
+   "frog_p": 0.1,
+   "green_px": 0,
+   "grid": [
+    5,
+    4
+   ],
+   "candidates": [],
+   "elapsed_ms": 891,
+   "calls": 2,
+   "tokens": 7800,
+   "image": "frames/step_01.jpg"
+  },
+  {
+   "frame": "20261017190904_1.jpg",
+   "title_p": 0.05,
+   "action": "click",
+   "frog_p": 0.85,
+   "green_px": 0,
+   "grid": [
+    5,
+    4
+   ],
+   "candidates": [
+    {
+     "tile": "r3c1",
+     "present": 0.87,
+     "confidence": 0.88,
+     "score": 0.766,
+     "box_px": [
+      155,
+      931,
+      258,
+      1016
+     ]
+    },
+    {
+     "tile": "r2c3",
+     "present": 0.53,
+     "confidence": 0.86,
+     "score": 0.456,
+     "box_px": [
+      1331,
+      455,
+      1401,
+      522
+     ]
+    },
+    {
+     "tile": "r2c5",
+     "present": 0.76,
+     "confidence": 0.59,
+     "score": 0.448,
+     "box_px": [
+      2457,
+      344,
+      2537,
+      402
+     ]
+    },
+    {
+     "tile": "r4c1",
+     "present": 0.78,
+     "confidence": 0.57,
+     "score": 0.445,
+     "box_px": [
+      195,
+      1186,
+      292,
+      1246
+     ]
+    },
+    {
+     "tile": "r1c5",
+     "present": 0.76,
+     "confidence": 0.69,
+     "score": 0.367,
+     "box_px": [
+      2445,
+      343,
+      2537,
+      399
+     ]
+    },
+    {
+     "tile": "r2c4",
+     "present": 0.68,
+     "confidence": 0.42,
+     "score": 0.286,
+     "box_px": [
+      1849,
+      339,
+      1925,
+      442
+     ]
+    },
+    {
+     "tile": "r4c4",
+     "present": 0.81,
+     "confidence": 0.32,
+     "score": 0.259,
+     "box_px": [
+      1855,
+      1218,
+      1951,
+      1255
+     ]
+    },
+    {
+     "tile": "r3c3",
+     "present": 0.71,
+     "confidence": 0.31,
+     "score": 0.22,
+     "box_px": [
+      1223,
+      971,
+      1299,
+      1034
+     ]
+    },
+    {
+     "tile": "r4c5",
+     "present": 0.76,
+     "confidence": 0.28,
+     "score": 0.213,
+     "box_px": [
+      2331,
+      1178,
+      2485,
+      1255
+     ]
+    },
+    {
+     "tile": "r2c1",
+     "present": 0.49,
+     "confidence": 0.53,
+     "score": 0.182,
+     "box_px": [
+      264,
+      616,
+      568,
+      741
+     ]
+    },
+    {
+     "tile": "r3c2",
+     "present": 0.58,
+     "confidence": 0.13,
+     "score": 0.075,
+     "box_px": [
+      673,
+      699,
+      800,
+      815
+     ]
+    },
+    {
+     "tile": "r2c2",
+     "present": 0.41,
+     "confidence": 0.16,
+     "score": 0.066,
+     "box_px": [
+      666,
+      629,
+      787,
+      754
+     ]
+    },
+    {
+     "tile": "r4c3",
+     "present": 0.57,
+     "confidence": 0.09,
+     "score": 0.051,
+     "box_px": [
+      1496,
+      1138,
+      1578,
+      1202
+     ]
+    },
+    {
+     "tile": "r4c2",
+     "present": 0.55,
+     "confidence": 0.13,
+     "score": 0.05,
+     "box_px": [
+      952,
+      1041,
+      1060,
+      1093
+     ]
+    },
+    {
+     "tile": "r1c4",
+     "present": 0.52,
+     "confidence": 0.09,
+     "score": 0.047,
+     "box_px": [
+      1646,
+      181,
+      1760,
+      395
+     ]
+    }
+   ],
+   "box_px": [
+    155,
+    931,
+    258,
+    1016
+   ],
+   "score": 0.766,
+   "elapsed_ms": 9434,
+   "calls": 22,
+   "tokens": 102969,
+   "image": "frames/step_02.jpg"
+  },
+  {
+   "frame": "20261017190918_1.jpg",
+   "title_p": 0.03,
+   "action": "click",
+   "frog_p": 0.95,
+   "green_px": 0,
+   "grid": [
+    5,
+    4
+   ],
+   "candidates": [
+    {
+     "tile": "r3c3",
+     "present": 0.91,
+     "confidence": 0.79,
+     "score": 0.719,
+     "box_px": [
+      1191,
+      717,
+      1305,
+      811
+     ]
+    },
+    {
+     "tile": "r1c4",
+     "present": 0.84,
+     "confidence": 0.82,
+     "score": 0.689,
+     "box_px": [
+      1500,
+      274,
+      1621,
+      343
+     ]
+    },
+    {
+     "tile": "r4c1",
+     "present": 0.86,
+     "confidence": 0.66,
+     "score": 0.568,
+     "box_px": [
+      63,
+      1045,
+      155,
+      1134
+     ]
+    },
+    {
+     "tile": "r1c2",
+     "present": 0.85,
+     "confidence": 0.87,
+     "score": 0.518,
+     "box_px": [
+      571,
+      270,
+      736,
+      403
+     ]
+    },
+    {
+     "tile": "r3c1",
+     "present": 0.9,
+     "confidence": 0.82,
+     "score": 0.517,
+     "box_px": [
+      57,
+      1038,
+      149,
+      1119
+     ]
+    },
+    {
+     "tile": "r2c1",
+     "present": 0.73,
+     "confidence": 0.68,
+     "score": 0.496,
+     "box_px": [
+      57,
+      544,
+      126,
+      611
+     ]
+    },
+    {
+     "tile": "r4c5",
+     "present": 0.9,
+     "confidence": 0.7,
+     "score": 0.441,
+     "box_px": [
+      2009,
+      1392,
+      2101,
+      1436
+     ]
+    },
+    {
+     "tile": "r1c3",
+     "present": 0.81,
+     "confidence": 0.66,
+     "score": 0.374,
+     "box_px": [
+      1496,
+      282,
+      1591,
+      343
+     ]
+    },
+    {
+     "tile": "r2c4",
+     "present": 0.47,
+     "confidence": 0.55,
+     "score": 0.259,
+     "box_px": [
+      1614,
+      406,
+      1703,
+      482
+     ]
+    },
+    {
+     "tile": "r2c2",
+     "present": 0.49,
+     "confidence": 0.51,
+     "score": 0.25,
+     "box_px": [
+      565,
+      326,
+      787,
+      500
+     ]
+    },
+    {
+     "tile": "r2c3",
+     "present": 0.64,
+     "confidence": 0.5,
+     "score": 0.224,
+     "box_px": [
+      1185,
+      714,
+      1299,
+      759
+     ]
+    },
+    {
+     "tile": "r4c2",
+     "present": 0.5,
+     "confidence": 0.33,
+     "score": 0.165,
+     "box_px": [
+      857,
+      1065,
+      933,
+      1162
+     ]
+    },
+    {
+     "tile": "r4c4",
+     "present": 0.88,
+     "confidence": 0.09,
+     "score": 0.079,
+     "box_px": [
+      1589,
+      1093,
+      1684,
+      1158
+     ]
+    },
+    {
+     "tile": "r3c2",
+     "present": 0.48,
+     "confidence": 0.14,
+     "score": 0.067,
+     "box_px": [
+      844,
+      1070,
+      927,
+      1114
+     ]
+    },
+    {
+     "tile": "r2c5",
+     "present": 0.55,
+     "confidence": 0.06,
+     "score": 0.033,
+     "box_px": [
+      2290,
+      518,
+      2428,
+      567
+     ]
+    },
+    {
+     "tile": "r3c4",
+     "present": 0.41,
+     "confidence": 0.08,
+     "score": 0.033,
+     "box_px": [
+      1767,
+      695,
+      1875,
+      873
+     ]
+    }
+   ],
+   "box_px": [
+    1191,
+    717,
+    1305,
+    811
+   ],
+   "score": 0.719,
+   "elapsed_ms": 9779,
+   "calls": 22,
+   "tokens": 102998,
+   "image": "frames/step_03.jpg"
+  },
+  {
+   "frame": "20261017190934_1.jpg",
+   "title_p": 0.03,
+   "action": "click",
+   "frog_p": 0.92,
+   "green_px": 5562,
+   "grid": [
+    5,
+    4
+   ],
+   "candidates": [
+    {
+     "tile": "r1c4",
+     "present": 0.83,
+     "confidence": 0.84,
+     "score": 0.697,
+     "box_px": [
+      1500,
+      274,
+      1621,
+      339
+     ]
+    },
+    {
+     "tile": "r4c1",
+     "present": 0.87,
+     "confidence": 0.68,
+     "score": 0.592,
+     "box_px": [
+      63,
+      1045,
+      155,
+      1138
+     ]
+    },
+    {
+     "tile": "r3c1",
+     "present": 0.92,
+     "confidence": 0.85,
+     "score": 0.547,
+     "box_px": [
+      57,
+      1038,
+      149,
+      1119
+     ]
+    },
+    {
+     "tile": "r1c2",
+     "present": 0.84,
+     "confidence": 0.86,
+     "score": 0.506,
+     "box_px": [
+      571,
+      270,
+      736,
+      403
+     ]
+    },
+    {
+     "tile": "r2c1",
+     "present": 0.73,
+     "confidence": 0.67,
+     "score": 0.489,
+     "box_px": [
+      52,
+      549,
+      126,
+      611
+     ]
+    },
+    {
+     "tile": "r1c3",
+     "present": 0.81,
+     "confidence": 0.78,
+     "score": 0.442,
+     "box_px": [
+      1496,
+      274,
+      1591,
+      343
+     ]
+    },
+    {
+     "tile": "r4c5",
+     "present": 0.89,
+     "confidence": 0.67,
+     "score": 0.417,
+     "box_px": [
+      2015,
+      1392,
+      2101,
+      1436
+     ]
+    },
+    {
+     "tile": "r2c4",
+     "present": 0.47,
+     "confidence": 0.57,
+     "score": 0.268,
+     "box_px": [
+      1614,
+      411,
+      1703,
+      482
+     ]
+    },
+    {
+     "tile": "r2c2",
+     "present": 0.46,
+     "confidence": 0.49,
+     "score": 0.225,
+     "box_px": [
+      565,
+      326,
+      793,
+      500
+     ]
+    },
+    {
+     "tile": "r4c2",
+     "present": 0.49,
+     "confidence": 0.29,
+     "score": 0.142,
+     "box_px": [
+      857,
+      1065,
+      933,
+      1162
+     ]
+    },
+    {
+     "tile": "r3c2",
+     "present": 0.48,
+     "confidence": 0.13,
+     "score": 0.062,
+     "box_px": [
+      851,
+      1065,
+      933,
+      1114
+     ]
+    },
+    {
+     "tile": "r4c4",
+     "present": 0.89,
+     "confidence": 0.07,
+     "score": 0.062,
+     "box_px": [
+      1602,
+      1093,
+      1690,
+      1432
+     ]
+    },
+    {
+     "tile": "r3c4",
+     "present": 0.43,
+     "confidence": 0.11,
+     "score": 0.047,
+     "box_px": [
+      1767,
+      820,
+      1875,
+      878
+     ]
+    },
+    {
+     "tile": "r2c5",
+     "present": 0.53,
+     "confidence": 0.07,
+     "score": 0.037,
+     "box_px": [
+      2290,
+      518,
+      2422,
+      567
+     ]
+    }
+   ],
+   "box_px": [
+    1500,
+    274,
+    1621,
+    339
+   ],
+   "score": 0.697,
+   "elapsed_ms": 13106,
+   "calls": 22,
+   "tokens": 102988,
+   "image": "frames/step_04.jpg"
+  },
+  {
+   "frame": "20261017190941_1.jpg",
+   "title_p": 0.02,
+   "action": "click",
+   "frog_p": 0.95,
+   "green_px": 31,
+   "grid": [
+    5,
+    4
+   ],
+   "candidates": [
+    {
+     "tile": "r1c3",
+     "present": 0.88,
+     "confidence": 0.76,
+     "score": 0.669,
+     "box_px": [
+      1026,
+      12,
+      1140,
+      97
+     ]
+    },
+    {
+     "tile": "r2c2",
+     "present": 0.66,
+     "confidence": 0.8,
+     "score": 0.528,
+     "box_px": [
+      584,
+      451,
+      711,
+      562
+     ]
+    },
+    {
+     "tile": "r2c1",
+     "present": 0.79,
+     "confidence": 0.64,
+     "score": 0.506,
+     "box_px": [
+      126,
+      326,
+      264,
+      428
+     ]
+    },
+    {
+     "tile": "r3c3",
+     "present": 0.67,
+     "confidence": 0.67,
+     "score": 0.449,
+     "box_px": [
+      1026,
+      820,
+      1109,
+      891
+     ]
+    },
+    {
+     "tile": "r2c4",
+     "present": 0.59,
+     "confidence": 0.7,
+     "score": 0.413,
+     "box_px": [
+      1544,
+      384,
+      1665,
+      455
+     ]
+    },
+    {
+     "tile": "r3c5",
+     "present": 0.63,
+     "confidence": 0.49,
+     "score": 0.309,
+     "box_px": [
+      2009,
+      690,
+      2170,
+      802
+     ]
+    },
+    {
+     "tile": "r2c5",
+     "present": 0.61,
+     "confidence": 0.36,
+     "score": 0.22,
+     "box_px": [
+      2233,
+      602,
+      2342,
+      674
+     ]
+    },
+    {
+     "tile": "r4c4",
+     "present": 0.8,
+     "confidence": 0.22,
+     "score": 0.176,
+     "box_px": [
+      1976,
+      1162,
+      2040,
+      1202
+     ]
+    },
+    {
+     "tile": "r3c2",
+     "present": 0.82,
+     "confidence": 0.18,
+     "score": 0.148,
+     "box_px": [
+      749,
+      824,
+      952,
+      1114
+     ]
+    },
+    {
+     "tile": "r3c1",
+     "present": 0.91,
+     "confidence": 0.2,
+     "score": 0.127,
+     "box_px": [
+      103,
+      864,
+      195,
+      1119
+     ]
+    },
+    {
+     "tile": "r4c5",
+     "present": 0.8,
+     "confidence": 0.14,
+     "score": 0.112,
+     "box_px": [
+      2004,
+      1134,
+      2055,
+      1210
+     ]
+    },
+    {
+     "tile": "r1c2",
+     "present": 0.87,
+     "confidence": 0.11,
+     "score": 0.096,
+     "box_px": [
+      1003,
+      12,
+      1066,
+      89
+     ]
+    }
+   ],
+   "box_px": [
+    1026,
+    12,
+    1140,
+    97
+   ],
+   "score": 0.669,
+   "elapsed_ms": 12825,
+   "calls": 22,
+   "tokens": 102992,
+   "image": "frames/step_05.jpg"
+  },
+  {
+   "frame": "20261017190946_1.jpg",
+   "title_p": 0.03,
+   "action": "click",
+   "frog_p": 0.81,
+   "green_px": 0,
+   "grid": [
+    5,
+    4
+   ],
+   "candidates": [
+    {
+     "tile": "r4c5",
+     "present": 0.94,
+     "confidence": 0.83,
+     "score": 0.78,
+     "box_px": [
+      2187,
+      1089,
+      2262,
+      1214
+     ]
+    },
+    {
+     "tile": "r2c3",
+     "present": 0.71,
+     "confidence": 0.88,
+     "score": 0.625,
+     "box_px": [
+      1007,
+      723,
+      1077,
+      754
+     ]
+    },
+    {
+     "tile": "r1c2",
+     "present": 0.87,
+     "confidence": 0.63,
+     "score": 0.548,
+     "box_px": [
+      908,
+      185,
+      1009,
+      282
+     ]
+    },
+    {
+     "tile": "r1c1",
+     "present": 0.59,
+     "confidence": 0.78,
+     "score": 0.46,
+     "box_px": [
+      189,
+      121,
+      304,
+      214
+     ]
+    },
+    {
+     "tile": "r4c4",
+     "present": 0.62,
+     "confidence": 0.74,
+     "score": 0.459,
+     "box_px": [
+      1576,
+      1259,
+      1729,
+      1343
+     ]
+    },
+    {
+     "tile": "r2c5",
+     "present": 0.77,
+     "confidence": 0.49,
+     "score": 0.377,
+     "box_px": [
+      2044,
+      607,
+      2193,
+      669
+     ]
+    },
+    {
+     "tile": "r1c3",
+     "present": 0.69,
+     "confidence": 0.66,
+     "score": 0.319,
+     "box_px": [
+      969,
+      194,
+      1032,
+      298
+     ]
+    },
+    {
+     "tile": "r3c2",
+     "present": 0.57,
+     "confidence": 0.54,
+     "score": 0.308,
+     "box_px": [
+      882,
+      686,
+      965,
+      730
+     ]
+    },
+    {
+     "tile": "r2c4",
+     "present": 0.83,
+     "confidence": 0.33,
+     "score": 0.274,
+     "box_px": [
+      1665,
+      366,
+      1760,
+      419
+     ]
+    },
+    {
+     "tile": "r2c2",
+     "present": 0.42,
+     "confidence": 0.55,
+     "score": 0.231,
+     "box_px": [
+      889,
+      661,
+      971,
+      741
+     ]
+    },
+    {
+     "tile": "r4c3",
+     "present": 0.65,
+     "confidence": 0.34,
+     "score": 0.221,
+     "box_px": [
+      1248,
+      1053,
+      1318,
+      1142
+     ]
+    },
+    {
+     "tile": "r3c3",
+     "present": 0.8,
+     "confidence": 0.07,
+     "score": 0.056,
+     "box_px": [
+      994,
+      730,
+      1064,
+      1110
+     ]
+    }
+   ],
+   "box_px": [
+    2187,
+    1089,
+    2262,
+    1214
+   ],
+   "score": 0.78,
+   "elapsed_ms": 8720,
+   "calls": 22,
+   "tokens": 102983,
+   "image": "frames/step_06.jpg"
+  },
+  {
+   "frame": "20261017190951_1.jpg",
+   "title_p": 0.03,
+   "action": "click",
+   "frog_p": 0.89,
+   "green_px": 0,
+   "grid": [
+    5,
+    4
+   ],
+   "candidates": [
+    {
+     "tile": "r1c5",
+     "present": 0.84,
+     "confidence": 0.74,
+     "score": 0.622,
+     "box_px": [
+      2187,
+      282,
+      2268,
+      395
+     ]
+    },
+    {
+     "tile": "r2c4",
+     "present": 0.59,
+     "confidence": 0.65,
+     "score": 0.384,
+     "box_px": [
+      1570,
+      455,
+      1735,
+      549
+     ]
+    },
+    {
+     "tile": "r1c3",
+     "present": 0.7,
+     "confidence": 0.35,
+     "score": 0.245,
+     "box_px": [
+      1242,
+      266,
+      1318,
+      347
+     ]
+    },
+    {
+     "tile": "r2c5",
+     "present": 0.74,
+     "confidence": 0.21,
+     "score": 0.155,
+     "box_px": [
+      2164,
+      326,
+      2245,
+      411
+     ]
+    },
+    {
+     "tile": "r3c5",
+     "present": 0.54,
+     "confidence": 0.05,
+     "score": 0.027,
+     "box_px": [
+      2445,
+      686,
+      2543,
+      1034
+     ]
+    },
+    {
+     "tile": "r2c1",
+     "present": 0.48,
+     "confidence": 0.03,
+     "score": 0.01,
+     "box_px": [
+      212,
+      321,
+      568,
+      375
+     ]
+    }
+   ],
+   "box_px": [
+    2187,
+    282,
+    2268,
+    395
+   ],
+   "score": 0.622,
+   "elapsed_ms": 8777,
+   "calls": 22,
+   "tokens": 102979,
+   "image": "frames/step_07.jpg"
+  }
+ ]
+}

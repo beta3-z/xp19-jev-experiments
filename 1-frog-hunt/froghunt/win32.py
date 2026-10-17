@@ -95,6 +95,8 @@ class INPUT(ctypes.Structure):
 
 user32.GetDC.restype = w.HDC
 user32.GetDC.argtypes = [w.HWND]
+user32.ReleaseDC.argtypes = [w.HWND, w.HDC]
+user32.ReleaseDC.restype = ctypes.c_int
 gdi32.CreateDCW.restype = w.HDC
 gdi32.CreateDCW.argtypes = [w.LPCWSTR, w.LPCWSTR, w.LPCWSTR, ctypes.c_void_p]
 gdi32.CreateCompatibleDC.restype = w.HDC
@@ -245,6 +247,9 @@ class Window:
         return pt.x, pt.y, r.right - r.left, r.bottom - r.top
 
     def grab(self, draw_cursor: bool = False) -> Image.Image:
+        if user32.IsIconic(self.hwnd):
+            user32.ShowWindow(self.hwnd, SW_RESTORE)
+            time.sleep(0.4)
         x, y, cw, ch = self.client_rect()
         if cw <= 0 or ch <= 0:
             raise OSError("window has no client area (minimised?)")

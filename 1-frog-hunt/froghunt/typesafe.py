@@ -72,23 +72,45 @@ class Client:
             "questions": {
                 "target_present": {
                     "type": "noul",
-                    "instructions": f"Is there a {target} in `screen`?",
+                    "instructions": (
+                        f"Is there a {target} in `screen`? "
+                        f"Ignore any {target} that is already found (found ones are drawn green). "
+                        f"A spot marked with a red cross was already checked and holds no {target}."
+                    ),
                 },
                 "target": {
                     "type": "box",
-                    "instructions": f"the {target} in `screen`",
+                    "instructions": (
+                        f"the {target} in `screen` "
+                        f"(ignore any {target} that is already found - found ones are drawn green; "
+                        f"a spot marked with a red cross was already checked, do not pick it)"
+                    ),
                 },
             },
         }
         payload, boundary = _multipart(body, image_png)
+        started = time.perf_counter()
+        data = self._deliver(payload, boundary)
+        return _parse(data, (time.perf_counter() - started) * 1000, 1)
 
+    def ask_custom(self, image_png: bytes, questions: dict) -> dict:
+        """Raw answers for caller-defined questions, e.g. screen classification."""
+        ref = uuid.uuid4().hex
+        body = {
+            "model": self.model,
+            "state": {"screen": ref},
+            "assets": {ref: {"type": "image", "part": "image"}},
+            "questions": questions,
+        }
+        payload, boundary = _multipart(body, image_png)
+        data = self._deliver(payload, boundary)
+        return data.get("answers") or {}
+
+    def _deliver(self, payload: bytes, boundary: str) -> dict:
         last_error: Exception | None = None
         for attempt in range(1, self.retries + 1):
-            started = time.perf_counter()
             try:
-                data = self._post(payload, boundary)
-                latency_ms = (time.perf_counter() - started) * 1000
-                return _parse(data, latency_ms, attempt)
+                return self._post(payload, boundary)
             except urllib.error.HTTPError as exc:
                 detail = exc.read().decode("utf-8", "replace")
                 last_error = TypeSafeError(exc.code, detail)
@@ -194,6 +216,9 @@ class MockClient:
     def note_found(self, box: Box) -> None:
         origin_x, origin_y, width, height = self.view()
         self.found.append(box_to_scene(box, (origin_x, origin_y), (width, height)))
+
+    def ask_custom(self, image_png: bytes, questions: dict) -> dict:
+        return {name: {"noul": 0.0} for name in questions}
 
     def ask(self, image_png: bytes, *, tile: Tile | None = None, target: str = "frog") -> Detection:
         started = time.perf_counter()

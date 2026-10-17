@@ -157,7 +157,7 @@ On stop, the mouse is force-released, the recording is closed, and `run.json` ge
 
 **Overlapping tiles.** Frogs are tens of pixels on a 1440p frame. If the model gets the whole screenshot, it will not see them after the resize to 1568 px. So the frame is cut into a grid, and each tile goes as a separate image scaled to 1568 px. Tiles overlap by 12%: without overlap, a frog on a border is cut in half and found twice as strips, never whole. A candidate that touches the tile edge gets a score penalty.
 
-**Two questions in one call.** `box` has no "not found" answer: it always returns four edges. So `noul` ("is there a frog in `screen`?") goes with it, and a candidate with a low probability is discarded. Score = `noul × confidence`.
+**Two questions in one call.** `box` has no "not found" answer: it always returns four edges. So `noul` ("is there a frog in `screen`?") goes with it, and a candidate with a low probability is discarded. Score = `noul × confidence`. Both instructions say to ignore frogs that are already found: found frogs turn green in the game, and without that clause the model points at them confidently.
 
 **One call, one frog.** `box` returns exactly one rectangle. Six tiles = six parallel calls, and the best one wins.
 
