@@ -210,3 +210,22 @@ frog-hunt/
     render.py         log + recording → video; or reconstruction from still frames
     cli.py            grab / doctor / run / render / selftest
 ```
+
+## Third-party content
+
+The world panorama in this repository is a full-level image from **100 hidden frogs** by Anatoliy Loginovskikh — [store.steampowered.com/app/1806840](https://store.steampowered.com/app/1806840/). Art © Anatoliy Loginovskikh. All rights to the artwork belong to the author.
+
+Files in this repository that contain that artwork:
+
+- `runs/world_scroll/world.jpg` — the stitched full-level panorama;
+- `runs/grab/world_map.jpg` — the same panorama with frog boxes drawn over it.
+
+Other captures under `1-frog-hunt/` (for example in `runs/`) show the same artwork and have the same status.
+
+This project is not affiliated with, endorsed by, or sponsored by the author of the game.
+
+The artwork is used for testing and demonstration only, non-commercially, and no permission from the author has been obtained yet. Reuse of the artwork by anyone else is not permitted; for any rights, please contact the author.
+
+If you are the rights holder and want the artwork removed, open an issue or write to beta3-z@mail.ru — I will remove it as soon as possible.
+
+The original game is worth playing: [100 hidden frogs on Steam](https://store.steampowered.com/app/1806840/).
